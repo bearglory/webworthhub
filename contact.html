@@ -321,11 +321,37 @@ async function handleSubmit(e) {
   const data = new FormData(form);
 
   try {
-    const res = await fetch(form.action, {
+    const res = await fetch('https://formspree.io/f/mwvwovgg', {
       method: 'POST',
       body: data,
       headers: { 'Accept': 'application/json' }
     });
 
     if (res.ok) {
-      document.getElementById('contact-form-wrap')
+      document.getElementById('contact-form-wrap').style.display = 'none';
+      const success = document.getElementById('success-state');
+      success.style.display = 'block';
+      let count = 3;
+      const counter = document.createElement('p');
+      counter.style.cssText = 'font-size:13px;color:var(--muted);margin-top:12px;';
+      counter.textContent = 'Returning to home in ' + count + '…';
+      success.appendChild(counter);
+      const interval = setInterval(() => {
+        count--;
+        counter.textContent = 'Returning to home in ' + count + '…';
+        if (count <= 0) { clearInterval(interval); window.location.href = 'index.html'; }
+      }, 1000);
+    } else {
+      throw new Error('error');
+    }
+  } catch(err) {
+    btnText.textContent = 'Failed — try again';
+    btnIcon.textContent = '✕';
+    btn.disabled = false;
+    btn.style.background = '#c0392b';
+    setTimeout(() => { btnText.textContent = 'Send message'; btnIcon.textContent = '→'; btn.style.background = ''; }, 3000);
+  }
+}
+</script>
+</body>
+</html>

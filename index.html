@@ -278,16 +278,7 @@ footer a:hover { color: white; }
 
 <!-- PAGE INTRO ANIMATION CSS -->
 <style>
-#intro-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  background: var(--bg);
-}
-#intro-canvas { position:absolute; inset:0; width:100%; height:100%; }
-.page-content { opacity:0; transition: opacity 1s ease; }
-.page-content.visible { opacity:1; }
+
 </style>
 <script>
 // Scroll to top on every page load/refresh
@@ -315,107 +306,10 @@ window.scrollTo(0, 0);
 <!-- BACK TO TOP -->
 <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
 
-<!-- INTRO ANIMATION OVERLAY -->
-<div id="intro-overlay">
-  <canvas id="intro-canvas"></canvas>
-</div>
-
-<script>
-(function() {
-  const overlay = document.getElementById('intro-overlay');
-  const canvas  = document.getElementById('intro-canvas');
-  canvas.style.display = 'none'; // canvas kullanmıyoruz
-
-  const DOMAINS = [
-    'google.com','youtube.com','facebook.com','instagram.com','amazon.com',
-    'reddit.com','twitter.com','netflix.com','github.com','tiktok.com',
-    'linkedin.com','wikipedia.org','discord.com','spotify.com','twitch.tv',
-    'pinterest.com','microsoft.com','apple.com','openai.com','stackoverflow.com',
-    'ebay.com','quora.com','medium.com','wordpress.com',
-  ];
-
-  let icons = [], animId, phase = 0, phaseTimer = 0;
-
-  function mkIcon() {
-    const domain = DOMAINS[Math.floor(Math.random()*DOMAINS.length)];
-    const size = 32 + Math.random()*40;
-    const el = document.createElement('img');
-    el.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-    el.onerror = () => el.remove();
-    el.style.cssText = `
-      position:absolute;
-      width:${size}px; height:${size}px;
-      border-radius:${size*.2}px;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity 0.4s ease;
-      will-change:transform,opacity;
-    `;
-    // Random start position outside screen
-    const side = Math.floor(Math.random()*4);
-    let x, y;
-    const W = window.innerWidth, H = window.innerHeight;
-    if      (side===0){x=Math.random()*W; y=-80;}
-    else if (side===1){x=W+80; y=Math.random()*H;}
-    else if (side===2){x=Math.random()*W; y=H+80;}
-    else              {x=-80; y=Math.random()*H;}
-
-    const tx = W*0.1 + Math.random()*W*0.8;
-    const ty = H*0.1 + Math.random()*H*0.8;
-    const rot = (Math.random()-.5)*30;
-    const dur = 1.5 + Math.random()*2;
-
-    el.style.left = x+'px';
-    el.style.top  = y+'px';
-    el.style.transform = `rotate(${rot}deg)`;
-    overlay.appendChild(el);
-
-    // Animate in
-    requestAnimationFrame(()=>{
-      el.style.transition = `all ${dur}s cubic-bezier(0.2,0,0.8,1)`;
-      el.style.opacity = '0.85';
-      el.style.left = tx+'px';
-      el.style.top  = ty+'px';
-    });
-
-    return { el, x:tx, y:ty, rot, size };
-  }
-
-  // Spawn icons gradually
-  let spawnCount = 0;
-  const spawnInterval = setInterval(()=>{
-    if(spawnCount < 35){
-      mkIcon();
-      spawnCount++;
-    } else {
-      clearInterval(spawnInterval);
-    }
-  }, 80);
-
-  // After 0.5s open site
-  setTimeout(()=>{
-    overlay.style.background = 'transparent';
-    document.querySelector('.page-content').classList.add('visible');
-    // Allow scrolling after site opens
-    overlay.style.pointerEvents = 'none';
-  }, 500);
-
-  // After 2s zoom out & fade
-  setTimeout(()=>{
-    overlay.style.transition = 'transform 2.5s cubic-bezier(0.4,0,0.2,1), opacity 2.5s ease';
-    overlay.style.transform = 'scale(2.5)';
-    overlay.style.opacity = '0';
-    setTimeout(()=>{ overlay.style.display='none'; }, 2500);
-  }, 2000);
-
-  // Always scroll to top on load
-  window.scrollTo(0, 0);
-
-})();
-</script>
 
 
-<div class="page-content">
+
+<div class="page-content" style="opacity:1">
 
 <!-- NAV -->
 <nav>

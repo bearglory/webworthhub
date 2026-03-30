@@ -19,40 +19,26 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0a0a0a;
-  --bg2: #111111;
-  --black: #f0ede8;
-  --accent: #00ff87;
-  --muted: #555550;
-  --border: #1e2e24;
-  --card: #141414;
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'Instrument Sans', sans-serif;
-  --shadow: 0 2px 20px rgba(0,0,0,0.4);
-  --shadow-lg: 0 8px 40px rgba(0,255,135,0.08);
+  --bg: #0a0a0a; --bg2: #111111; --black: #f0ede8; --accent: #00ff87;
+  --muted: #555550; --border: #1e2e24; --card: #141414;
+  --font-display: 'Syne', sans-serif; --font-body: 'Instrument Sans', sans-serif;
+  --shadow: 0 2px 20px rgba(0,0,0,0.4); --shadow-lg: 0 8px 40px rgba(0,255,135,0.08);
 }
 [data-theme="light"] {
-  --bg: #f0faf4;
-  --bg2: #e4f5eb;
-  --black: #0d1f15;
-  --accent: #00b359;
-  --muted: #6b8f77;
-  --border: #c8e8d4;
-  --card: #ffffff;
-  --shadow: 0 2px 20px rgba(0,100,50,0.08);
-  --shadow-lg: 0 8px 40px rgba(0,179,89,0.12);
+  --bg: #f0faf4; --bg2: #e4f5eb; --black: #0d1f15; --accent: #00b359;
+  --muted: #6b8f77; --border: #c8e8d4; --card: #ffffff;
+  --shadow: 0 2px 20px rgba(0,100,50,0.08); --shadow-lg: 0 8px 40px rgba(0,179,89,0.12);
 }
 html { scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--black); font-family: var(--font-body); font-size: 16px; line-height: 1.6; min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--bg); opacity: 0.96; backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 32px; height: 64px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; transition: background 0.3s; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--bg); opacity: 0.96; backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 32px; height: 64px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
 .logo { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--black); text-decoration: none; justify-self: start; }
 .logo span { color: var(--accent); }
 .nav-links { display: flex; gap: 24px; align-items: center; justify-self: center; }
-.nav-links a { font-size: 14px; font-weight: 500; color: var(--black); text-decoration: none; transition: color 0.2s; }
-.nav-links a:hover { color: var(--accent); }
+.nav-links a { font-size: 16px; font-weight: 800; color: var(--accent); font-family: var(--font-display); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { opacity: 0.8; }
 .nav-right { justify-self: end; }
 .dark-toggle { background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 6px 12px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--muted); transition: all 0.2s; }
-.dark-toggle:hover { border-color: var(--accent); }
 .container { max-width: 900px; margin: 0 auto; padding: 120px 32px 80px; }
 .page-tag { display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 3px 10px; margin-bottom: 20px; }
 h1 { font-family: var(--font-display); font-size: clamp(36px, 6vw, 64px); font-weight: 800; line-height: 1.05; letter-spacing: -2px; color: var(--black); margin-bottom: 16px; }
@@ -100,13 +86,12 @@ footer a:hover { color: var(--accent); }
 </style>
 </head>
 <body>
-
 <nav>
   <a href="index.html" class="logo">Web<span>Worth</span>Hub</a>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="contact.html">Contact</a>
-    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="privacy-policy.html">Privacy</a>
   </div>
   <div class="nav-right">
     <button class="dark-toggle" onclick="toggleDark()" id="dark-btn">☀️ Light</button>
@@ -119,7 +104,6 @@ footer a:hover { color: var(--accent); }
     <h1>Let's <em>talk.</em></h1>
     <p class="page-sub">Have a question, found a bug, or want to partner with us? We usually reply within 24 hours.</p>
   </div>
-
   <div class="contact-grid animate" style="animation-delay:0.1s">
     <div class="info-stack">
       <div class="info-card">
@@ -143,7 +127,6 @@ footer a:hover { color: var(--accent); }
         <p>Found something broken? Let us know and we'll fix it fast.</p>
       </div>
     </div>
-
     <div class="form-card">
       <h2>Send a message</h2>
       <div id="contact-form-wrap">
@@ -241,11 +224,11 @@ async function handleSubmit(e) {
       let count = 3;
       const counter = document.createElement('p');
       counter.style.cssText = 'font-size:13px;color:var(--muted);margin-top:12px;';
-      counter.textContent = 'Returning to home in ' + count + '…';
+      counter.textContent = 'Returning to home in ' + count + '...';
       success.appendChild(counter);
       const interval = setInterval(() => {
         count--;
-        counter.textContent = 'Returning to home in ' + count + '…';
+        counter.textContent = 'Returning to home in ' + count + '...';
         if (count <= 0) { clearInterval(interval); window.location.href = 'index.html'; }
       }, 1000);
     } else {
@@ -253,4 +236,16 @@ async function handleSubmit(e) {
     }
   } catch(err) {
     btnText.textContent = 'Failed — try again';
-    btnIcon.textContent = '
+    btnIcon.textContent = '✕';
+    btn.disabled = false;
+    btn.style.background = '#c0392b';
+    setTimeout(() => {
+      btnText.textContent = 'Send message';
+      btnIcon.textContent = '→';
+      btn.style.background = '';
+    }, 3000);
+  }
+}
+</script>
+</body>
+</html>

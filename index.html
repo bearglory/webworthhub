@@ -124,7 +124,11 @@ h1 em { font-style: normal; color: var(--accent); }
 
 /* ── RECENTLY CHECKED ── */
 .recent-section { max-width: 640px; margin: 20px auto 0; display: none; animation: fadeUp 0.4s ease both; }
-.recent-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.recent-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+.clear-history-btn { font-size: 11px; font-weight: 600; color: var(--accent); background: transparent; border: 1.5px solid var(--accent); border-radius: 6px; padding: 3px 10px; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; }
+.clear-history-btn:hover { background: var(--accent); color: white; }
+.recent-chip-x { font-size: 15px; color: var(--muted); margin-left: 2px; line-height: 1; cursor: pointer; }
+.recent-chip-x:hover { color: var(--accent); }
 .recent-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .recent-chip { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 500; color: var(--black); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
 .recent-chip:hover { border-color: var(--accent); color: var(--accent); }
@@ -423,7 +427,6 @@ window.scrollTo(0, 0);
     <a href="#how" onclick="scrollToSection('how',event)">How it works</a>
     <a href="#top" onclick="scrollToSection('top',event)">Top Sites</a>
     <a href="#faq" onclick="scrollToSection('faq',event)">FAQ</a>
-    <a href="contact.html">Contact</a>
   </div>
   <div class="nav-right">
     <button class="dark-toggle" onclick="toggleDark()" id="dark-btn">
@@ -461,7 +464,10 @@ window.scrollTo(0, 0);
 
   <!-- RECENTLY CHECKED -->
   <div class="recent-section" id="recent-section">
-    <div class="recent-title">🕐 Recently checked</div>
+    <div class="recent-title">
+      <span>🕐 Recently checked</span>
+      <button class="clear-history-btn" onclick="clearHistory()">Clear history</button>
+    </div>
     <div class="recent-list" id="recent-list"></div>
   </div>
 </section>
@@ -540,7 +546,6 @@ window.scrollTo(0, 0);
     <a href="#top" onclick="scrollToSection('top',event)">Top Sites</a>
     <a href="#how" onclick="scrollToSection('how',event)">How it Works</a>
     <a href="#faq" onclick="scrollToSection('faq',event)">FAQ</a>
-    <a href="contact.html">Contact</a>
     <a href="privacy-policy.html">Privacy Policy</a>
   </p>
   <p>© 2026 WebWorthHub — All estimates are approximations for informational purposes only. Not intended for financial decisions.</p>
@@ -807,8 +812,18 @@ function renderRecent() {
     <div class="recent-chip" onclick="fillExample('${d}')">
       <img src="https://www.google.com/s2/favicons?domain=${d}&sz=32" onerror="this.style.display='none'" alt="">
       ${d}
+      <span class="recent-chip-x" onclick="event.stopPropagation();removeRecent('${d}')">×</span>
     </div>
   `).join('');
+}
+function removeRecent(domain) {
+  let recent = getRecent().filter(d => d !== domain);
+  localStorage.setItem('recent', JSON.stringify(recent));
+  renderRecent();
+}
+function clearHistory() {
+  localStorage.setItem('recent', JSON.stringify([]));
+  renderRecent();
 }
 
 // ─── SEARCH ──────────────────────────────────────────────────────────────────

@@ -273,6 +273,7 @@ footer a:hover { color: white; }
 @media(max-width: 600px) {
   nav { padding: 0 16px; }
   .nav-links { display: none; }
+  .sound-btn-desktop { display: none; }
   .hero { padding: 100px 16px 60px; }
   #results, .top-sites, .faq-section { padding: 0 16px 60px; }
   .result-header { flex-direction: column; }
@@ -342,7 +343,7 @@ window.scrollTo(0, 0);
     <a href="contact.html">Contact</a>
   </div>
   <div class="nav-right">
-    <button id="sound-effect-btn" onclick="toggleSound()" style="background:transparent;border:1px solid var(--border);border-radius:100px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:var(--font-body);transition:all 0.2s;margin-right:8px;">🔇 Sound off</button>
+    <button id="sound-effect-btn" class="sound-btn-desktop" onclick="toggleSound()" style="background:transparent;border:1px solid var(--border);border-radius:100px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:var(--font-body);transition:all 0.2s;margin-right:8px;">🔇 Sound off</button>
     <button class="dark-toggle" onclick="toggleDark()" id="dark-btn">
       <span class="toggle-icon" id="toggle-icon">☀️</span>
       <span id="toggle-label">Light</span>
@@ -701,11 +702,16 @@ function toggleDark() {
   document.getElementById('toggle-label').textContent = isLight ? 'Light' : 'Dark';
   localStorage.setItem('theme', isLight ? 'dark' : 'light');
 }
-// Load saved theme
+// Load saved theme — dark is default
 (function() {
   const saved = localStorage.getItem('theme');
   if (saved === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
+    document.getElementById('toggle-icon').textContent = '☀️';
+    document.getElementById('toggle-label').textContent = 'Light';
+  } else {
+    // Dark varsayılan — sistem temasından bağımsız
+    document.documentElement.removeAttribute('data-theme');
     document.getElementById('toggle-icon').textContent = '☀️';
     document.getElementById('toggle-label').textContent = 'Light';
   }

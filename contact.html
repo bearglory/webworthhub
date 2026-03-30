@@ -198,7 +198,7 @@ footer a:hover { color: white; }
       <div class="info-card">
         <div class="info-card-icon">✉️</div>
         <h3>Email us directly</h3>
-        <p><a href="mailto:contact@webworthhub.com">contact@webworthhub.com</a></p>
+        <p><a href="/cdn-cgi/l/email-protection#65060a0b1104061125120007120a17110d0d10074b060a08"><span class="__cf_email__" data-cfemail="294a46475d484a5d695e4c4b5e465b5d41415c4b074a4644">[email&#160;protected]</span></a></p>
       </div>
       <div class="info-card">
         <div class="info-card-icon">⚡</div>
@@ -253,6 +253,8 @@ footer a:hover { color: white; }
             <textarea id="message" name="message" placeholder="Tell us what's on your mind…" required></textarea>
           </div>
 
+          <!-- redirect after submit -->
+          <input type="hidden" name="_next" value="https://webworthhub.com/contact.html?sent=1">
           <!-- honeypot anti-spam -->
           <input type="text" name="_gotcha" style="display:none">
 
@@ -284,7 +286,13 @@ footer a:hover { color: white; }
   <p>© 2026 WebWorthHub — All rights reserved.</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── SHOW SUCCESS IF REDIRECTED BACK ──────────────────────────────────────
+if (new URLSearchParams(window.location.search).get('sent') === '1') {
+  document.getElementById('contact-form-wrap').style.display = 'none';
+  document.getElementById('success-state').style.display = 'block';
+}
+
 // ── DARK MODE ──────────────────────────────────────────────────────────────
 function toggleDark() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -322,11 +330,4 @@ async function handleSubmit(e) {
     });
 
     if (res.ok) {
-      document.getElementById('contact-form-wrap').style.display = 'none';
-      document.getElementById('success-state').style.display = 'block';
-    } else {
-      throw new Error('Server error');
-    }
-  } catch (err) {
-    btnText.textContent = 'Failed — try again';
-    btnIcon.textContent = '�
+      document.getElementById('contact-form-wrap')

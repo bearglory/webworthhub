@@ -1061,12 +1061,16 @@ function showResults(domain, rdapData) {
         <div class="detail-row" id="rdap-age"><span class="detail-row-label">Domain age</span><span class="detail-row-value" style="color:var(--muted);">Loading...</span></div>
         <div class="detail-row" id="rdap-registrar"><span class="detail-row-label">Registrar</span><span class="detail-row-value" style="color:var(--muted);">Loading...</span></div>
       </div>
+      <div class="detail-card" id="pagespeed-card" style="margin-bottom:16px;display:none;"></div>
       <div class="ad-slot"><span class="ad-slot-placeholder">📢 Ad space — connect Google AdSense here</span></div>
     `;
     el.style.display = 'block';
     window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
     if (rdapData) processDomainInfo(domain, rdapData);
     else { const card = document.getElementById('domain-info'); if(card) card.style.display='none'; }
+    const psCard2 = document.getElementById('pagespeed-card');
+    if (psCard2) { psCard2.style.display='block'; psCard2.innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px;">⏳ Loading PageSpeed scores from Google...</div>'; }
+    fetchPageSpeed(domain).then(function(scores) { renderPageSpeed(scores); });
     addRecent(domain);
     return;
   }
@@ -1096,12 +1100,12 @@ function showResults(domain, rdapData) {
         </div>
         <div>
           <div class="domain-name">${domain}</div>
-          <div class="domain-status" style="color:var(--muted);">⚠️ Limited public data</div>
+          <div class="domain-status">${s.estimated ? '<span style="color:var(--muted);">⚠️ Limited public data</span>' : '<span class="domain-status-dot"></span> Active website'}</div>
         </div>
       </div>
       <div class="result-worth">
         <div class="worth-label">Estimated Worth</div>
-        <div class="worth-value" style="color:var(--muted);font-size:20px;">N/A</div>
+        <div class="worth-value">${s.estimated ? '<span style="color:var(--muted);font-size:20px;">N/A</span>' : '<span>' + fmt(s.worth) + '</span>'}</div>
       </div>
     </div>
 
@@ -1158,6 +1162,10 @@ function showResults(domain, rdapData) {
       </div>
     </div>` : ''}
 
+    <div class="detail-card" id="pagespeed-card" style="margin-bottom:16px;display:none;">
+      <div style="color:var(--muted);font-size:13px;">⏳ Loading PageSpeed scores...</div>
+    </div>
+
     <div class="detail-card" id="domain-info" style="margin-bottom:16px;padding:0;overflow:hidden;">
       <table style="width:100%;border-collapse:collapse;">
         <thead><tr><th colspan="2" style="${th}">🌐 Domain Information</th></tr></thead>
@@ -1189,6 +1197,11 @@ function showResults(domain, rdapData) {
 
   if (rdapData) processDomainInfo(domain, rdapData);
   else { const card = document.getElementById('domain-info'); if(card) card.style.display='none'; }
+
+  // ── PAGESPEED ──
+  const psCard = document.getElementById('pagespeed-card');
+  if (psCard) { psCard.style.display='block'; psCard.innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px;">\u23f3 Loading PageSpeed scores from Google...</div>'; }
+  fetchPageSpeed(domain).then(function(scores) { renderPageSpeed(scores); });
 }
 
 function getAlexaRank(domain, visitors) {
@@ -1210,6 +1223,46 @@ function getAlexaRank(domain, visitors) {
   if (visitors > 100000)   return 5000 + (h % 50000);
   if (visitors > 10000)    return 50000 + (h % 500000);
   return 500000 + (h % 5000000);
+}
+
+// ── PAGESPEED API ──────────────────────────────────────────────────────────────
+const PAGESPEED_KEY = 'AIzaSyDx7RBU8UOk_yyFSQm1dRNGvS24GssJWpQ';
+
+async function fetchPageSpeed(domain) {
+  try {
+    const url = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://${domain}&key=${PAGESPEED_KEY}&strategy=mobile&category=performance&category=seo&category=accessibility`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const cats = data.lighthouseResult && data.lighthouseResult.categories;
+    if (!cats) return null;
+    return {
+      performance: Math.round((cats.performance && cats.performance.score || 0) * 100),
+      seo: Math.round((cats.seo && cats.seo.score || 0) * 100),
+      accessibility: Math.round((cats.accessibility && cats.accessibility.score || 0) * 100),
+    };
+  } catch(e) { return null; }
+}
+
+function renderPageSpeed(scores) {
+  const card = document.getElementById('pagespeed-card');
+  if (!card) return;
+  if (!scores) { card.style.display = 'none'; return; }
+
+  const color = function(s) { return s >= 90 ? '#0cce6b' : s >= 50 ? '#ffa400' : '#ff4e42'; };
+  const lbl = function(s) { return s >= 90 ? 'Good' : s >= 50 ? 'Needs Improvement' : 'Poor'; };
+
+  card.innerHTML = '<h3>\u26a1 PageSpeed Insights <span style="font-size:11px;color:var(--muted);font-weight:400;">(by Google)</span></h3>' +
+    '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;">' +
+    [['Performance', scores.performance], ['SEO', scores.seo], ['Accessibility', scores.accessibility]].map(function(item) {
+      var name = item[0], score = item[1];
+      return '<div style="flex:1;min-width:100px;text-align:center;background:var(--bg2);border-radius:12px;padding:16px 8px;">' +
+        '<div style="font-size:28px;font-weight:800;color:' + color(score) + ';">' + score + '</div>' +
+        '<div style="font-size:11px;font-weight:700;color:' + color(score) + ';margin-bottom:4px;">' + lbl(score) + '</div>' +
+        '<div style="font-size:12px;color:var(--muted);">' + name + '</div></div>';
+    }).join('') +
+    '</div><div style="font-size:11px;color:var(--muted);margin-top:10px;">Scores are out of 100. Data from Google PageSpeed Insights.</div>';
+  card.style.display = 'block';
 }
 
 function processDomainInfo(domain, data) {

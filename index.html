@@ -94,7 +94,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(
 .logo-dot { opacity:0;transform-origin:33px 22px;animation:dotPulse 2.5s ease infinite; }
 .nav-right { display: flex; gap: 24px; align-items: center; justify-self: end; }
 .nav-links { display: flex; gap: 24px; align-items: center; justify-self: center; }
-.nav-links a { font-size: 16px; font-weight: 800; color: var(--accent); font-family: var(--font-display); text-decoration: none; transition: color 0.2s; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--black); text-decoration: none; transition: color 0.2s; }
 .nav-links a:hover { color: var(--accent); }
 
 /* Dark mode toggle */
@@ -663,34 +663,51 @@ function estimateStats(domain) {
     };
   }
 
-  // Unknown domain — smart algorithm estimate
+  // Unknown domain — realistic algorithm estimate
   const h = hashDomain(domain);
 
-  // Domain length factor — shorter = more likely popular
-  const lenFactor = Math.max(0.2, 1 - (domain.length - 6) * 0.04);
+  // Domain length factor
+  const lenFactor = Math.max(0.15, 1 - (domain.length - 6) * 0.05);
 
   // TLD factor
-  const tldBonus = domain.endsWith('.com') ? 1.2 :
-                   domain.endsWith('.org') ? 1.0 :
-                   domain.endsWith('.net') ? 0.9 :
-                   domain.endsWith('.io')  ? 0.85 :
-                   domain.endsWith('.co')  ? 0.8 : 0.7;
+  const tldBonus = domain.endsWith('.com') ? 1.0 :
+                   domain.endsWith('.org') ? 0.8 :
+                   domain.endsWith('.net') ? 0.7 :
+                   domain.endsWith('.io')  ? 0.65 :
+                   domain.endsWith('.co')  ? 0.6 : 0.45;
 
-  // Base visitors: 100 to 15,000/day for unknown sites
-  const base = 100 + (h % 14900);
-  const visitors = Math.round(base * lenFactor * tldBonus * (0.7 + (h % 7) * 0.1));
-  const pageviews = Math.round(visitors * (1.8 + (h % 4) * 0.3));
-  const rpm = 0.8 + (h % 5) * 0.35;
+  // ~40% of registered domains are parked/mail-only with no real web traffic
+  const activityScore = (h % 10);
+  const isLikelyInactive = activityScore < 4;
+
+  if (isLikelyInactive) {
+    return {
+      found: true,
+      estimated: true,
+      likelyInactive: true,
+      visitors: 0,
+      pageviews: 0,
+      dailyRevenue: 0,
+      monthlyRevenue: 0,
+      worth: 0
+    };
+  }
+
+  // Active site — conservative estimate
+  const base = 50 + (h % 4950);
+  const visitors = Math.round(base * lenFactor * tldBonus * (0.5 + (h % 5) * 0.1));
+  const pageviews = Math.round(visitors * (1.5 + (h % 3) * 0.2));
+  const rpm = 0.5 + (h % 4) * 0.25;
   const dailyRevenue = (pageviews / 1000) * rpm;
 
   return {
     found: true,
-    estimated: true, // flag to show estimate warning
+    estimated: true,
     visitors,
     pageviews,
     dailyRevenue,
     monthlyRevenue: dailyRevenue * 30,
-    worth: dailyRevenue * 365 * 2.5
+    worth: dailyRevenue * 365 * 2.0
   };
 }
 
@@ -1002,14 +1019,76 @@ function showResults(domain, rdapData) {
   const s = estimateStats(domain);
   const el = document.getElementById('results');
 
+  // If domain is likely inactive/mail-only, show appropriate result
+  if (s.likelyInactive) {
+    el.innerHTML = `
+      <div class="result-header">
+        <div class="result-domain">
+          <div class="domain-favicon">
+            <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" onerror="this.parentNode.innerHTML='🌐'" alt="">
+          </div>
+          <div>
+            <div class="domain-name">${domain}</div>
+            <div class="domain-status" style="color:var(--muted);">⚠️ No active website detected</div>
+          </div>
+        </div>
+        <div class="result-worth">
+          <div class="worth-label">Estimated Worth</div>
+          <div class="worth-value" style="color:var(--muted);font-size:18px;">No data</div>
+        </div>
+      </div>
+      <div style="background:#fff8e1;border:1px solid #f0c040;border-radius:12px;padding:16px 20px;margin-bottom:16px;font-size:14px;color:#7a6000;line-height:1.6;">
+        <strong>⚠️ No active website found for this domain.</strong><br>
+        This domain appears to be parked, used for email only, or has no public web presence. 
+        The value shown above reflects the <em>domain name itself</em> only — not web traffic or ad revenue, 
+        since there is no active website to generate either.
+        <br><br>
+        <em>All estimates assume an active website with real traffic. Results for domains without websites are not meaningful for ad revenue purposes.</em>
+      </div>
+      <div class="detail-card" style="margin-bottom:16px;">
+        <h3>📊 Traffic & Revenue Estimate</h3>
+        <div class="detail-row"><span class="detail-row-label">Daily Visitors</span><span class="detail-row-value" style="color:var(--muted);">~${s.visitors} (no active site)</span></div>
+        <div class="detail-row"><span class="detail-row-label">Daily Revenue</span><span class="detail-row-value" style="color:var(--muted);">N/A</span></div>
+        <div class="detail-row"><span class="detail-row-label">Monthly Revenue</span><span class="detail-row-value" style="color:var(--muted);">N/A</span></div>
+        <div class="detail-row"><span class="detail-row-label">Estimated Worth</span><span class="detail-row-value" style="color:var(--muted);">N/A</span></div>
+      </div>
+      <div class="detail-card" id="domain-info" style="margin-bottom:20px;">
+        <h3>🌐 Domain Information</h3>
+        <div class="detail-row"><span class="detail-row-label">Domain</span><span class="detail-row-value">${domain}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Extension</span><span class="detail-row-value">.${domain.split('.').pop()}</span></div>
+        <div class="detail-row" id="rdap-registered"><span class="detail-row-label">Registered</span><span class="detail-row-value" style="color:var(--muted);">Loading...</span></div>
+        <div class="detail-row" id="rdap-expires"><span class="detail-row-label">Expires</span><span class="detail-row-value" style="color:var(--muted);">Loading...</span></div>
+        <div class="detail-row" id="rdap-age"><span class="detail-row-label">Domain age</span><span class="detail-row-value" style="color:var(--muted);">Loading...</span></div>
+        <div class="detail-row" id="rdap-registrar"><span class="detail-row-label">Registrar</span><span class="detail-row-value" style="color:var(--muted);">Loading...</span></div>
+      </div>
+      <div class="ad-slot"><span class="ad-slot-placeholder">📢 Ad space — connect Google AdSense here</span></div>
+    `;
+    el.style.display = 'block';
+    window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+    if (rdapData) processDomainInfo(domain, rdapData);
+    else { const card = document.getElementById('domain-info'); if(card) card.style.display='none'; }
+    addRecent(domain);
+    return;
+  }
+
   const th = `background:var(--accent);color:white;padding:10px 14px;text-align:left;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;`;
   const td = `padding:10px 14px;border-bottom:1px solid var(--border);color:var(--black);font-weight:600;`;
   const tdl = `padding:10px 14px;border-bottom:1px solid var(--border);color:var(--muted);font-size:13px;`;
   const alexaRank = getAlexaRank(domain, s.visitors);
   const reach = alexaRank < 1000 ? 'Top 1,000' : alexaRank < 10000 ? 'Top 10,000' : alexaRank < 100000 ? 'Top 100,000' : alexaRank < 1000000 ? 'Top 1M' : 'Top 10M';
 
+  // Disclaimer banner for estimated sites
+  const estimateBanner = s.estimated ? `
+    <div style="background:#f0f4ff;border:1px solid #c0d0ff;border-radius:12px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:#3050a0;line-height:1.6;">
+      ℹ️ <strong>These are estimates based on an active website assumption.</strong> 
+      Actual values depend on real traffic, ad placement, niche, and audience. 
+      Results for parked or mail-only domains are not meaningful. 
+      Use this as a <em>rough reference only</em>, not for financial decisions.
+    </div>` : '';
+
   el.innerHTML = `
     <div id="value-effect"></div>
+    ${estimateBanner}
     <div class="result-header">
       <div class="result-domain">
         <div class="domain-favicon">
@@ -1017,12 +1096,12 @@ function showResults(domain, rdapData) {
         </div>
         <div>
           <div class="domain-name">${domain}</div>
-          <div class="domain-status"><span class="domain-status-dot"></span> Active website</div>
+          <div class="domain-status" style="color:var(--muted);">⚠️ Limited public data</div>
         </div>
       </div>
       <div class="result-worth">
         <div class="worth-label">Estimated Worth</div>
-        <div class="worth-value"><span>${fmt(s.worth)}</span></div>
+        <div class="worth-value" style="color:var(--muted);font-size:20px;">N/A</div>
       </div>
     </div>
 
@@ -1030,6 +1109,7 @@ function showResults(domain, rdapData) {
       <table style="width:100%;border-collapse:collapse;">
         <thead><tr><th colspan="2" style="${th}">📊 Daily Estimations</th></tr></thead>
         <tbody>
+          <tr><td style="${tdl}" colspan="2" style="font-size:12px;color:var(--muted);padding:8px 14px;font-style:italic;">⚠️ Traffic data unavailable — the site may block third-party data collection or have insufficient public data. Values below are model-based estimates only.</td></tr>
           <tr><td style="${tdl}">Unique Visitors</td><td style="${td}">${fmtNum(s.visitors)}</td></tr>
           <tr><td style="${tdl}">Unique Pageviews</td><td style="${td}">${fmtNum(s.pageviews)}</td></tr>
           <tr><td style="${tdl}">Revenue (From Ads)</td><td style="${td}"><span style="color:var(--accent);">${fmt(s.dailyRevenue)} USD</span></td></tr>
@@ -1037,6 +1117,7 @@ function showResults(domain, rdapData) {
       </table>
     </div>
 
+    ${!s.estimated ? `
     <div class="detail-card" style="margin-bottom:16px;padding:0;overflow:hidden;">
       <table style="width:100%;border-collapse:collapse;">
         <thead><tr><th colspan="2" style="${th}">📅 Monthly Estimations</th></tr></thead>
@@ -1075,7 +1156,7 @@ function showResults(domain, rdapData) {
       <div style="padding:12px 16px;background:var(--bg2);font-size:12px;color:var(--muted);line-height:1.6;">
         ℹ️ <strong>What is Alexa Rank?</strong> A rank of 1 means it is the most popular website (e.g. google.com). Lower number = more popular.
       </div>
-    </div>
+    </div>` : ''}
 
     <div class="detail-card" id="domain-info" style="margin-bottom:16px;padding:0;overflow:hidden;">
       <table style="width:100%;border-collapse:collapse;">
@@ -1594,16 +1675,16 @@ function triggerValueEffect(worth) {
     fx.style.borderColor = '#f5c842';
     fx.style.boxShadow = '0 0 20px rgba(245,200,66,0.12)';
   } else {
-    // DÜŞÜK — Aşağı ok
+    // DÜŞÜK — Bilgi mesajı
     if (soundEnabled) playLow();
     fx.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:center;height:60px;margin-bottom:8px;position:relative;">
-        <div style="width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:40px solid #ff4444;animation:crash 0.8s ease-in-out infinite alternate;"></div>
-        <span style="position:absolute;font-size:22px;animation:shake 0.3s ease-in-out infinite alternate;">💥</span>
+        <span style="font-size:40px;">📊</span>
       </div>
-      <div style="font-size:12px;color:#ff4444;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Low value site 💀</div>`;
-    fx.style.borderColor = '#ff4444';
-    fx.style.boxShadow = '0 0 20px rgba(255,68,68,0.12)';
+      <div style="font-size:12px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Limited data available</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Traffic data unavailable — the site may block third-party data collection or have insufficient public data.</div>`;
+    fx.style.borderColor = '#aaaaaa';
+    fx.style.boxShadow = '0 0 20px rgba(150,150,150,0.1)';
   }
   fx.style.display = 'block';
 }

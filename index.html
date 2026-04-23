@@ -26,20 +26,20 @@
 <meta name="twitter:title" content="WebWorthHub — Free Website Value Checker">
 <meta name="twitter:description" content="Instantly check how much any website is worth. Free traffic and revenue estimates for any domain.">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='9' fill='%2300ff87'/><path d='M7 26L13 15L19 21L23 16L33 22' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/><circle cx='33' cy='22' r='2.5' fill='white'/></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='9' fill='%2314b8a6'/><path d='M7 26L13 15L19 21L23 16L33 22' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/><circle cx='33' cy='22' r='2.5' fill='white'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0a0a0a; --bg2: #111111; --black: #f0ede8; --accent: #00ff87; --accent-dim: #00cc6a;
-  --muted: #555550; --white: #1a1a1a; --border: #1e2e24; --card: #141414;
+  --bg: #0a0a0a; --bg2: #111111; --black: #f0ede8; --accent: #14b8a6; --accent-dim: #0d9488;
+  --muted: #555550; --white: #1a1a1a; --border: #1a2e2d; --card: #141414;
   --font-display: 'Syne', sans-serif; --font-body: 'Instrument Sans', sans-serif;
-  --shadow: 0 2px 20px rgba(0,0,0,0.4); --shadow-lg: 0 8px 40px rgba(0,255,135,0.08);
+  --shadow: 0 2px 20px rgba(0,0,0,0.4); --shadow-lg: 0 8px 40px rgba(20,184,166,0.08);
 }
 [data-theme="light"] {
-  --bg: #f0faf4; --bg2: #e4f5eb; --black: #0d1f15; --accent: #00b359; --accent-dim: #009448;
-  --muted: #6b8f77; --white: #ffffff; --border: #c8e8d4; --card: #ffffff;
-  --shadow: 0 2px 20px rgba(0,100,50,0.08); --shadow-lg: 0 8px 40px rgba(0,179,89,0.12);
+  --bg: #f0fafa; --bg2: #e4f5f3; --black: #0d1f1e; --accent: #0d9488; --accent-dim: #0f766e;
+  --muted: #6b8f8d; --white: #ffffff; --border: #c8e8e4; --card: #ffffff;
+  --shadow: 0 2px 20px rgba(0,100,90,0.08); --shadow-lg: 0 8px 40px rgba(13,148,136,0.12);
 }
 html { scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--black); font-family: var(--font-body); font-size: 16px; line-height: 1.6; min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
@@ -166,7 +166,28 @@ h1 em { font-style: normal; color: var(--accent); }
 .aff-hs .aff-banner-sub { color: #aaa060; }
 .aff-hs .aff-banner-btn { background: #f5c842; color: #1a1a00; }
 
-/* ── SELL CTA ── */
+/* ── SHARE BUTTONS ── */
+.share-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.share-btn { display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer; border: none; font-family: var(--font-body); transition: transform 0.15s, opacity 0.2s; }
+.share-btn:hover { transform: translateY(-2px); opacity: 0.88; }
+.share-btn.twitter { background: #1da1f2; color: white; }
+.share-btn.whatsapp { background: #25d366; color: white; }
+.share-btn.copy { background: var(--card); border: 1px solid var(--border); color: var(--black); }
+.share-btn.copy:hover { border-color: var(--accent); }
+
+/* ── BADGE ── */
+.badge-section { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+.badge-section h3 { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--black); margin-bottom: 16px; }
+.badge-preview { background: linear-gradient(135deg, #0a1a10, #0d2015); border: 1px solid var(--accent); border-radius: 12px; padding: 14px 20px; display: inline-flex; align-items: center; gap: 12px; margin-bottom: 16px; cursor: pointer; transition: transform 0.15s; }
+.badge-preview:hover { transform: scale(1.02); }
+.badge-logo { font-family: var(--font-display); font-size: 14px; font-weight: 800; color: white; }
+.badge-logo span { color: var(--accent); }
+.badge-worth { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--accent); }
+.badge-label { font-size: 11px; color: #6ee7a0; }
+.badge-code { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--muted); font-family: monospace; word-break: break-all; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s; }
+.badge-code:hover { border-color: var(--accent); }
+.badge-copy-btn { background: var(--accent); color: #0a0a0a; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: opacity 0.2s; }
+.badge-copy-btn:hover { opacity: 0.85; }
 .sell-cta { display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg,#1a1a2e,#0d0f1f); border: 1px solid #2a2a4a; border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; }
 .sell-cta-text { flex: 1; }
 .sell-cta-title { font-size: 14px; font-weight: 700; color: #e0e0fa; margin-bottom: 3px; }
@@ -791,6 +812,44 @@ function showOwnSite(domain, rdapData) {
   else { const card = document.getElementById('domain-info'); if(card) card.style.display='none'; }
   addRecent(domain);
 }
+function shareOnTwitter(domain, worth) {
+  const text = `🌐 ${domain} is estimated to be worth ${worth}! Check your website value for free 👇`;
+  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://webworthhub.com/' + domain)}`;
+  window.open(url, '_blank');
+}
+function shareOnWhatsApp(domain, worth) {
+  const text = `🌐 ${domain} is worth ${worth}! Check your website value for free: https://webworthhub.com/${domain}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+function copyLink(domain) {
+  navigator.clipboard.writeText(`https://webworthhub.com/${domain}`).then(() => showToast('🔗 Link copied!'));
+}
+function copyBadgeCode(domain, worth) {
+  const code = `<a href="https://webworthhub.com/${domain}" target="_blank"><img src="https://webworthhub.com/badge.svg?domain=${domain}&worth=${encodeURIComponent(worth)}" alt="${domain} is worth ${worth} — WebWorthHub"/></a>`;
+  navigator.clipboard.writeText(code).then(() => showToast('✅ Badge code copied!'));
+}
+function getShareBarHTML(domain, worth) {
+  const w = worth || 'N/A';
+  return `<div class="share-bar">
+    <button class="share-btn twitter" onclick="shareOnTwitter('${domain}','${w}')">🐦 Share on Twitter</button>
+    <button class="share-btn whatsapp" onclick="shareOnWhatsApp('${domain}','${w}')">💬 Share on WhatsApp</button>
+    <button class="share-btn copy" onclick="copyLink('${domain}')">🔗 Copy Link</button>
+  </div>`;
+}
+function getBadgeHTML(domain, worth) {
+  const w = worth || 'N/A';
+  const code = `&lt;a href="https://webworthhub.com/${domain}"&gt;&lt;img src="https://webworthhub.com/badge.svg?domain=${domain}&worth=${encodeURIComponent(w)}" alt="${domain} worth ${w}"/&gt;&lt;/a&gt;`;
+  return `<div class="badge-section">
+    <h3>🏅 Website Worth Badge</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Show off your website's value! Add this badge to your site.</p>
+    <div class="badge-preview" onclick="copyBadgeCode('${domain}','${w}')">
+      <div class="badge-logo">Web<span>Worth</span>Hub</div>
+      <div><div class="badge-worth">${w}</div><div class="badge-label">estimated worth</div></div>
+    </div>
+    <div class="badge-code" onclick="copyBadgeCode('${domain}','${w}')" title="Click to copy">${code}</div>
+    <button class="badge-copy-btn" onclick="copyBadgeCode('${domain}','${w}')">Copy Badge Code</button>
+  </div>`;
+}
 function sellCtaHTML(domain) {
   return `<div class="sell-cta"><div style="font-size:28px;">💼</div><div class="sell-cta-text"><div class="sell-cta-title">Thinking of selling <strong>${domain}</strong>?</div><div class="sell-cta-sub">List it on Flippa — the world's largest website marketplace</div></div><a href="https://flippa.com/?ref=REPLACE_FLIPPA_REF" target="_blank" rel="noopener sponsored" class="sell-cta-btn" onclick="gtag('event','affiliate_click',{affiliate:'flippa',placement:'result_cta'})">Sell →</a></div>`;
 }
@@ -889,7 +948,9 @@ function showResults(domain, rdapData) {
         </tbody>
       </table>
     </div>
-    ${sellCtaHTML(domain)}
+    ${getShareBarHTML(domain, s.estimated ? 'N/A' : fmt(s.worth))}
+    ${getBadgeHTML(domain, s.estimated ? 'N/A' : fmt(s.worth))}
+    ${s.estimated ? sellCtaHTML(domain) : ''}
     <div class="disclaimer">⚠️ <span>${s.estimated ? `<strong>Rough estimate only</strong> — No real traffic data for <strong>${domain}</strong>. Values are algorithmically generated.` : `Estimates based on publicly available data. Actual values may differ.`}</span></div>
   `;
   el.style.display = 'block';

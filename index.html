@@ -59,7 +59,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(
 .dark-toggle { background: var(--bg2); border: 1px solid var(--border); border-radius: 100px; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--muted); transition: all 0.2s; }
 .dark-toggle:hover { border-color: var(--accent); color: var(--black); }
 .toggle-icon { font-size: 15px; transition: transform 0.4s; }
-.hero { padding: 140px 32px 80px 190px; max-width: 1000px; margin: 0 auto; text-align: center; position: relative; overflow: visible; }
+.hero { padding: 140px 32px 80px 32px; max-width: 900px; margin: 0 auto; text-align: center; position: relative; overflow: visible; }
 .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 6px 14px; font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 28px; animation: fadeUp 0.6s ease both; }
 .hero-badge-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: pulse 2s ease infinite; }
 .blog-float { position: fixed; top: 80px; right: 0; background: var(--card); border: 1px solid var(--border); border-left: none; border-radius: 0 0 0 20px; padding: 28px 32px; width: 300px; text-decoration: none; transition: transform 0.2s, border-color 0.2s; animation: fadeUp 0.6s 0.4s ease both; z-index: 90; }
@@ -176,35 +176,55 @@ h1 em { font-style: normal; color: var(--accent); }
 
 /* ── AFFILIATE SIDEBAR ── */
 .affiliate-sidebar {
-  position: fixed;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  z-index: 200;
-  width: 170px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: none;
-  border-radius: 0 20px 20px 0;
-  padding: 24px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  display: none;
 }
-.affiliate-sidebar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
-.aff-sidebar-item {
+/* ── PAGE WRAPPER 2-COLUMN ── */
+.page-with-sidebar {
+  display: flex;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+.left-sidebar {
+  width: 180px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 80px;
+  padding: 100px 16px 24px 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 24px;
+  min-height: calc(100vh - 64px);
+}
+.left-sidebar-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.left-sidebar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   text-decoration: none;
   transition: transform 0.15s;
 }
-.aff-sidebar-item:hover { transform: translateX(4px); }
-.aff-sidebar-icon { font-size: 22px; }
-.aff-sidebar-title { font-size: 14px; font-weight: 800; color: var(--accent); font-family: var(--font-display); line-height: 1.2; }
-.aff-sidebar-sub { font-size: 11px; color: var(--muted); }
-.aff-sidebar-divider { border: none; border-top: 1px solid var(--border); }
-.affiliate-sidebar-label-old, .aff-btn, .aff-divider { display: none; }
+.left-sidebar-item:hover { transform: translateX(4px); }
+.left-sidebar-icon { font-size: 22px; }
+.left-sidebar-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--accent);
+  font-family: var(--font-display);
+  line-height: 1.2;
+}
+.left-sidebar-sub { font-size: 11px; color: var(--muted); }
+.left-sidebar-divider { border: none; border-top: 1px solid var(--border); }
+.main-content { flex: 1; min-width: 0; }
+@media (max-width: 900px) {
+  .page-with-sidebar { display: block; }
+  .left-sidebar { display: none; }
+}
 
 /* ── TOP SITES ── */
 .top-sites { max-width: 860px; margin: 0 auto; padding: 0 32px 80px; }
@@ -292,27 +312,36 @@ window.scrollTo(0, 0);
 
 <div class="page-content" style="opacity:1">
 
-<!-- AFFILIATE SIDEBAR -->
-<div class="affiliate-sidebar">
-  <div class="affiliate-sidebar-label">🔗 Sponsored</div>
-  <a class="aff-sidebar-item" href="https://www.namecheap.com/?clickID=REPLACE_CJ_LINK" target="_blank" rel="noopener sponsored" onclick="gtag('event','affiliate_click',{affiliate:'namecheap',placement:'sidebar'})">
-    <div class="aff-sidebar-icon">🌐</div>
-    <div class="aff-sidebar-title">Get a Domain</div>
-    <div class="aff-sidebar-sub">from $1.98/yr</div>
+<!-- AFFILIATE SIDEBAR (hidden, replaced by left-sidebar) -->
+<div class="affiliate-sidebar"></div>
+
+<!-- 2-COLUMN LAYOUT -->
+<div class="page-with-sidebar">
+
+<!-- LEFT SIDEBAR -->
+<div class="left-sidebar">
+  <div class="left-sidebar-label">🔗 Sponsored</div>
+  <a class="left-sidebar-item" href="https://www.namecheap.com/?clickID=REPLACE_CJ_LINK" target="_blank" rel="noopener sponsored" onclick="gtag('event','affiliate_click',{affiliate:'namecheap',placement:'sidebar'})">
+    <div class="left-sidebar-icon">🌐</div>
+    <div class="left-sidebar-title">Get a Domain</div>
+    <div class="left-sidebar-sub">from $1.98/yr</div>
   </a>
-  <hr class="aff-sidebar-divider">
-  <a class="aff-sidebar-item" href="https://www.namecheap.com/hosting/?clickID=REPLACE_CJ_LINK" target="_blank" rel="noopener sponsored" onclick="gtag('event','affiliate_click',{affiliate:'namecheap_hosting',placement:'sidebar'})">
-    <div class="aff-sidebar-icon">🖥️</div>
-    <div class="aff-sidebar-title">Web Hosting</div>
-    <div class="aff-sidebar-sub">from $1.44/mo</div>
+  <hr class="left-sidebar-divider">
+  <a class="left-sidebar-item" href="https://www.namecheap.com/hosting/?clickID=REPLACE_CJ_LINK" target="_blank" rel="noopener sponsored" onclick="gtag('event','affiliate_click',{affiliate:'namecheap_hosting',placement:'sidebar'})">
+    <div class="left-sidebar-icon">🖥️</div>
+    <div class="left-sidebar-title">Web Hosting</div>
+    <div class="left-sidebar-sub">from $1.44/mo</div>
   </a>
-  <hr class="aff-sidebar-divider">
-  <a class="aff-sidebar-item" href="https://flippa.com/?ref=REPLACE_FLIPPA_REF" target="_blank" rel="noopener sponsored" onclick="gtag('event','affiliate_click',{affiliate:'flippa',placement:'sidebar'})">
-    <div class="aff-sidebar-icon">💰</div>
-    <div class="aff-sidebar-title">Buy &amp; Sell Sites</div>
-    <div class="aff-sidebar-sub">via Flippa</div>
+  <hr class="left-sidebar-divider">
+  <a class="left-sidebar-item" href="https://flippa.com/?ref=REPLACE_FLIPPA_REF" target="_blank" rel="noopener sponsored" onclick="gtag('event','affiliate_click',{affiliate:'flippa',placement:'sidebar'})">
+    <div class="left-sidebar-icon">💰</div>
+    <div class="left-sidebar-title">Buy &amp; Sell Sites</div>
+    <div class="left-sidebar-sub">via Flippa</div>
   </a>
 </div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
 
 <!-- NAV -->
 <nav>
@@ -1090,6 +1119,8 @@ domainInput.addEventListener('blur', hideAutocomplete);
 })();
 </script>
 
+</div> <!-- end .main-content -->
+</div> <!-- end .page-with-sidebar -->
 </div>
 </body>
 </html>
